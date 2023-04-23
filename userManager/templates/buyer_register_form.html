@@ -1,10 +1,18 @@
+{% extends "base.html" %}
 
-<form method="POST">
-    {% csrf_token %}
-    {{ form }}
-    <button type="submit"> Submit </button>
-</form>
-
-<a href="/login_user_buyer"> Iniciar secion como frabricante </a>
-<a href="/login_user_maker"> Inicia secion como comprador</a>
-<a href="/register_form_maker"> Registrate como comprador </a>
+{% block content %}
+<h2>Registrate como fabricante</h2>
+<div class="buyer_register_form">
+    <form method="POST" class="form_buyer">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit" class="btn-submit"> Crear </button>
+    </form>
+    <br>
+    <div class="links">
+        <a href="/login_user_buyer"> Iniciar secion como frabricante </a>
+        <a href="/login_user_maker"> Inicia secion como comprador</a>
+        <a href="/register_form_maker"> Registrate como comprador </a>
+    </div>
+</div>
+{% endblock %}
