@@ -63,11 +63,9 @@ def login_user_maker(request):
         email = request.POST.get('email')
         company_name = request.POST.get('username')
         password = request.POST.get('password')
-        print(f"----- Form Save(Maker) {email}, {password} -----")
 
         login = Maker()
         log = login.request_login(company_name=company_name, password=password)
-        print(log)
         if not log:
             log = "Success: Inicio de secion already"
             return render(request, 'login_user_maker.html', {"form": form,

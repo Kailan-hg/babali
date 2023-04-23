@@ -1,11 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User, AbstractUser, BaseUserManager, Group, Permission
 from django.contrib.auth.validators import ASCIIUsernameValidator, UnicodeUsernameValidator
-from django.contrib.auth import login
-import http.cookies
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from django.http import HttpResponse
 from datetime import date
 import psycopg2
+import json
+import http.cookies
 
 
 class Buyer(models.Model):
@@ -101,7 +102,6 @@ class Buyer(models.Model):
             self._email = email
             self._password = password
             # Si le quito esto no funciono, es como el coco de doom XD
-            print(f"{self._email}, {self._password}")
 
             self._login()
             return self.error
@@ -117,10 +117,9 @@ class Buyer(models.Model):
             if None is not self._rows:
                 cookie = http.cookies.SimpleCookie()
                 cookie['email'] = self._email
-                cookie['email']["path"] = '/'
-
+                cookie['email']["path"] = '/login_user_buyer/'
                 response = HttpResponse("Login user success")
-                response.set_cookie(key='company_name', value=self._email, path="/")
+                response.set_cookie(key='company_name', value=self._email, path="/login_user_buyer/")
                 self._conn.close()
             else:
                 self.error.append(f"Error: el password o el email son incorrectos")
@@ -292,4 +291,5 @@ class CustomUserMaker(AbstractUser):
     def is_active(self):
         """El usuario esta activo?"""
         return self.active
+
 

@@ -1,10 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
   <h2>Iniciar sesión</h2>
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-
     {% if error %}
         <p>{{ error }}</p>
     {% endif %}
-    <button type="submit" class="btn btn-primary">Ingresar</button>
+    <button type="submit" onclick="setState('maker')" class="btn btn-primary">Ingresar</button>
   </form>
+  <a href="/login_user_buyer"> Iniciar secion como frabricante </a>
+  <a href="/register_form_buyer"> Registrate como fabricante </a>
+  <a href="/register_form_maker"> Registrate como comprador </a>
+{% endblock %}
