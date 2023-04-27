@@ -1,3 +1,8 @@
+/**
+ * Check localstorage state, users push or not
+ * states: ['buyer', 'maker']
+ * Send to application depend in state.
+ */
 window.addEventListener('DOMContentLoaded', (event) => {
     if(JSON.parse(localStorage.getItem('myState'))){
       let myData = JSON.parse(localStorage.getItem('myState'))
@@ -16,10 +21,14 @@ window.addEventListener('DOMContentLoaded', (event) => {
     }
  });
 
+// Create new state in localstorage
 function setState(state){
-    window.localStorage.setItem('myState', state);
+    window.localStorage.setItem('myState', state);    
 }
 
+// Delate state and redirect 
 function deleteState(){
+    let state = window.localStorage.getItem("myState")
     window.localStorage.setItem('myState', '')
+    window.location.href = `/login_user_${state}`
 }

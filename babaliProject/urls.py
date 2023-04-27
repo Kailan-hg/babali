@@ -4,5 +4,5 @@ from userManager import urls as userManager_urls
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include(userManager_urls))
+    path("", include(userManager_urls)) # Login and register users || Admin models to database users.
 ]
