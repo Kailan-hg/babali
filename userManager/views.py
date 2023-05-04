@@ -2,8 +2,9 @@ from django.shortcuts import render
 from .forms import BuyerRegisterForm, MakerRegisterForm, LoginTypeBuyer, LoginTypeMaker
 from .models import Buyer, Maker
 
-
 #  Buyer form register view.
+
+
 def buyer_register_form(request):
     # initializar db.
     if request.method == "POST":
@@ -105,4 +106,3 @@ def login_user_maker(request):
     # form default
     form = LoginTypeMaker()
     return render(request, 'login_user_maker.html', {"form": form})
-

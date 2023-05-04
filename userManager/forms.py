@@ -6,6 +6,8 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import CustomUserMaker
 
 # Register User to buyer
+
+
 class BuyerRegisterForm(UserCreationForm):
     _id = None
 
@@ -35,7 +37,7 @@ class LoginTypeBuyer(AuthenticationForm):
         fields = ('username', 'password1')
 
 
-# Login user marker 
+# Login user marker
 class LoginTypeMaker(AuthenticationForm):
     _id = None
     # Change value to username
@@ -44,4 +46,3 @@ class LoginTypeMaker(AuthenticationForm):
     class Meta:
         model = User
         fields = ('username', 'password')
-

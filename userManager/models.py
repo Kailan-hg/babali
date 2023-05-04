@@ -18,8 +18,10 @@ class Buyer(models.Model):
             push user in database
     """
     _id = None
-    _username = models.CharField(max_length=30, unique=True, validators=[ASCIIUsernameValidator()])
-    _password = models.CharField(max_length=30, validators=[UnicodeUsernameValidator()])
+    _username = models.CharField(max_length=30, unique=True, validators=[
+                                 ASCIIUsernameValidator()])
+    _password = models.CharField(max_length=30, validators=[
+                                 UnicodeUsernameValidator()])
     _email = models.EmailField(unique=True)
     _first_name = models.CharField(max_length=30)
     _last_name = models.CharField(max_length=30)
@@ -31,7 +33,6 @@ class Buyer(models.Model):
     _cur = None
     # Lines recovery cursor.
     _rows = None
-    
 
     # CONST
     _BUYERTABLE = "Buyer"
@@ -79,8 +80,8 @@ class Buyer(models.Model):
         except psycopg2.DatabaseError as e:
             self.error.append(f"Error: {e}")
 
-    
-    # Public method: save in database, check errors and validate info    
+    # Public method: save in database, check errors and validate info
+
     def request_save(self):
         try:
             # Check if user to exist in database.
@@ -165,12 +166,14 @@ class Buyer(models.Model):
                 cookie['email'] = self._email
                 cookie['email']["path"] = '/login_user_buyer/'
                 response = HttpResponse("Login user success")
-                response.set_cookie(key='company_name', value=self._email, path="/login_user_buyer/")
+                response.set_cookie(
+                    key='company_name', value=self._email, path="/login_user_buyer/")
                 # Close database
                 self._conn.close()
             else:
                 # Error print user
-                self.error.append(f"Error: el password o el email son incorrectos")
+                self.error.append(
+                    f"Error: el password o el email son incorrectos")
         # Error database user.
         except psycopg2.DatabaseError as e:
             self.error.append(f"Error: {e}")
@@ -186,8 +189,10 @@ class Maker(models.Model):
             push user in database
     """
     _id = None
-    _company_name = models.CharField(max_length=30, unique=True, validators=[ASCIIUsernameValidator()])
-    _password = models.CharField(max_length=30, validators=[UnicodeUsernameValidator()])
+    _company_name = models.CharField(max_length=30, unique=True, validators=[
+                                     ASCIIUsernameValidator()])
+    _password = models.CharField(max_length=30, validators=[
+                                 UnicodeUsernameValidator()])
     _email = models.EmailField(unique=True)
     _date = None
 
@@ -233,7 +238,7 @@ class Maker(models.Model):
         except psycopg2.DatabaseError as e:
             self.error.append(f"Error: {e}")
 
-    # Check info 
+    # Check info
     def request_save(self):
         try:
             # Duplicated company check
@@ -258,18 +263,19 @@ class Maker(models.Model):
             # Execute query and check rows walk the query
             self._cur.execute(query)
             self._rows = self._cur.fetchone()
-            #None = not exist company in database
+            # None = not exist company in database
             if None is self._rows:
                 return False
             else:
                 # exist company, push error.
-                self.error.append(f"Error: El email o la compania ya esta registrada")
+                self.error.append(
+                    f"Error: El email o la compania ya esta registrada")
                 return True
         # Erorr check
         except psycopg2.DatabaseError as e:
             self.error.append(f"Error: {e}")
 
-    # PRint info database 
+    # PRint info database
     def _check_db(self):
         query = f"SELECT * FROM {self._MAKERUSERTABLE}"
         try:
@@ -294,12 +300,13 @@ class Maker(models.Model):
             return self.error
         else:
             # Return error
-            self.error.append(f"Error: El nombre de la compania o la contrasena estan vacios")
+            self.error.append(
+                f"Error: El nombre de la compania o la contrasena estan vacios")
             return self.error
 
     # Login user
     def _login(self):
-        #query to check exist company in database
+        # query to check exist company in database
         query = f"SELECT * FROM {self._MAKERUSERTABLE} WHERE company_name='{self._company_name}' " \
                 f"AND password='{self._password}'"
         try:
@@ -314,17 +321,21 @@ class Maker(models.Model):
                 cookie['company_name']["path"] = '/'
 
                 response = HttpResponse("Login company success")
-                response.set_cookie(key='company_name', value=self._company_name, path="/")
+                response.set_cookie(key='company_name',
+                                    value=self._company_name, path="/")
                 # Close connection database
                 self._conn.close()
             else:
-                self.error.append(f"Error: La contrasena o el nombre de la compania son incorrectos")
+                self.error.append(
+                    f"Error: La contrasena o el nombre de la compania son incorrectos")
 
         # Error in database
         except psycopg2.DatabaseError as e:
             self.error.append(f"Error: {e}")
 
 # Form value
+
+
 class ManagerCustomUserMaker(BaseUserManager):
     # Create user validate fields
     def create_user(self, company_name, email, password=None):
@@ -357,8 +368,10 @@ class CustomUserMaker(AbstractUser):
     USERNAME_FIELD = 'company_name'
     REQUIRED_FIELDS = ["company_name"]
 
-    groups = models.ManyToManyField(Group, related_name="customusermaker_set", blank=True)
-    user_permissions = models.ManyToManyField(Permission, related_name="customusermaker_set", blank=True)
+    groups = models.ManyToManyField(
+        Group, related_name="customusermaker_set", blank=True)
+    user_permissions = models.ManyToManyField(
+        Permission, related_name="customusermaker_set", blank=True)
 
     class Meta:
         verbose_name = ("Custom_user_maker")
@@ -378,5 +391,3 @@ class CustomUserMaker(AbstractUser):
     def is_active(self):
         """El usuario esta activo?"""
         return self.active
-
-
