@@ -3,13 +3,13 @@ from django.db import models
 import psycopg2
 
 
-class buyer_product(models.Model):
+class BuyerProduct(models.Model):
     _id = None
     _id_product = None
     _username = models.CharField(max_length=30)
     _password = models.CharField(max_length=30)
     _status = models.CharField(max_length=30)
-    _value = models.CharField(max_length=30)
+    _price = models.CharField(max_length=30)
     _product = models.CharField(max_length=30)
     _company_name = models.CharField(max_length=30)
     _date_sold = None
@@ -22,22 +22,21 @@ class buyer_product(models.Model):
     _rows = None
 
     # CONST
-    _BUYERPRODUCTTABLE = "buyer_product"
-    _MAKERPRODUCTTABLE = "maker_product"
+    _BUYERPRODUCTTABLE = "buyer_products"
+    _MAKERPRODUCTTABLE = "maker_products"
     _BUYERUSERTABLE = "buyer_user"
 
     # Public
     error = []
     success = []
 
-    def __constructor__(self, username=None, password=None, id_product=None):
+    def __init__(self, username=None, password=None, id_product=None):
         # Assing principal vars
         self._username = username
         self._password = password
         self._date_sold = date.today()
         self._status = "Pendiente"
         self._id_product = id_product
-
         # Database conection.
         self._conn = psycopg2.connect(
             database="babali",
@@ -70,6 +69,9 @@ class buyer_product(models.Model):
             # Finish connection with database
             self._conn.close()
 
+    def send_request(self):
+        self._product_validate()
+
     def _product_validate(self):
         # Query the search to product in database maker_product
         query = f"SELECT * FROM {self._MAKERPRODUCTTABLE} WHERE id='{self._id_product}'"
@@ -78,13 +80,12 @@ class buyer_product(models.Model):
             self._rows = self._cur.fetchone()
             if None is not self._rows:
                 # Check stuck product
-                if self._rows["amount_stuck"] > 0:
+                if self._rows[4] > 0:  # [4] amount_stuck
                     # assing var is product
-                    self._value = self._rows["price_und"]
-                    self._company_name = self._rows["company_name"]
-                    self._product = self._rows["product"]
+                    self._price = self._rows[3]  # price_und
+                    self._company_name = self._rows[6]  # amount_sold
+                    self._product = self._rows[1]  # product
                     self._state = "En progreso"
-
                     self.success.append("Tenemos stuck")
                     return True
                 # Not product stuck
@@ -103,8 +104,8 @@ class buyer_product(models.Model):
 
     def _send_db(self):
         # Query to insert product in database
-        query = f"""INSERT INTO {self._BUYERPRODUCTTABLE}(status, value, product, date_sold, username, password)
-        values ('{self._status}', '{self._value}', '{self._product}', '{self._date_sold}', '{self._username}', '{self._password}')"""
+        query = f"""INSERT INTO {self._BUYERPRODUCTTABLE}(status, price, product, date_sold, username, password)
+        values ('{self._status}', '{self._price}', '{self._product}', '{self._date_sold}', '{self._username}', '{self._password}')"""
 
         try:
             # execute and push query
