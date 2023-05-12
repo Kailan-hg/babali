@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from .forms import BuyerRegisterForm, MakerRegisterForm, LoginTypeBuyer, LoginTypeMaker
 from .models import Buyer, Maker
 
@@ -68,9 +68,10 @@ def login_user_buyer(request):
         login = Buyer()
         log = login.request_login(email, password)
         # not => no error exist
-        if not log:
-            log = "Success: Inicio de secion already"
-            return render(request, 'login_user_buyer.html', {"form": form, 'error': log})
+        if log == 'User validate':
+            render(request, 'login_user_buyer.html',
+                   {"form": form, 'error': log})
+            return redirect(f'/product/buyer?email={email}')
         else:
             return render(request, 'login_user_buyer.html', {"form": form, 'error': log[0]})
 
@@ -97,9 +98,10 @@ def login_user_maker(request):
         login = Maker()
         log = login.request_login(company_name=company_name, password=password)
         # not log => no error exist
-        if not log:
-            log = "Success: Inicio de secion already"
-            return render(request, 'login_user_maker.html', {"form": form, 'error': log})
+        if log == 'Company Validate':
+            render(request, 'login_user_maker.html',
+                   {"form": form, 'error': log})
+            return redirect(f'/product/maker?company_name={company_name}')
         else:
             return render(request, 'login_user_maker.html', {"form": form, 'error': log[0]})
 

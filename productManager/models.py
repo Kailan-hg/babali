@@ -7,7 +7,6 @@ class BuyerProduct(models.Model):
     _id = None
     _id_product = None
     _username = models.CharField(max_length=30)
-    _password = models.CharField(max_length=30)
     _status = models.CharField(max_length=30)
     _price = models.CharField(max_length=30)
     _product = models.CharField(max_length=30)
@@ -30,10 +29,9 @@ class BuyerProduct(models.Model):
     error = []
     success = []
 
-    def __init__(self, username=None, password=None, id_product=None):
+    def __init__(self, username=None, id_product=None):
         # Assing principal vars
         self._username = username
-        self._password = password
         self._date_sold = date.today()
         self._status = "Pendiente"
         self._id_product = id_product
@@ -51,7 +49,7 @@ class BuyerProduct(models.Model):
 
     def _user_validate(self):
         # Validate user exist
-        query = f"SELECT * FROM {self._BUYERUSERTABLE} WHERE username='{self._username}' AND password='{self._password}'"
+        query = f"SELECT * FROM {self._BUYERUSERTABLE} WHERE username='{self._username}'"
         try:
             self._cur.execute(query)
             self._rows = self._cur.fetchone()
@@ -104,8 +102,8 @@ class BuyerProduct(models.Model):
 
     def _send_db(self):
         # Query to insert product in database
-        query = f"""INSERT INTO {self._BUYERPRODUCTTABLE}(status, price, product, date_sold, username, password)
-        values ('{self._status}', '{self._price}', '{self._product}', '{self._date_sold}', '{self._username}', '{self._password}')"""
+        query = f"""INSERT INTO {self._BUYERPRODUCTTABLE}(status, price, product, date_sold, username, id_product)
+        values ('{self._status}', '{self._price}', '{self._product}', '{self._date_sold}', '{self._username}', '{self._id_product}')"""
 
         try:
             # execute and push query
@@ -153,7 +151,7 @@ class BuyerProduct(models.Model):
 
     # Generar graficos
     def return_products_by_user(self):
-        query = f"SELECT * FROM {self._BUYERPRODUCTTABLE} WHERE username='{self._username}'"
+        query = f"SELECT * FROM {self._BUYERPRODUCTTABLE} WHERE company_name='{self._username}'"
 
         try:
             self._cur.execute(query)
@@ -164,3 +162,10 @@ class BuyerProduct(models.Model):
             # Finish connection with database
             self._conn.close()
             return False
+
+
+class MakerProduct():
+    _company_name = None
+
+    def __init__(self, company_name=None):
+        self._company_name = company_name

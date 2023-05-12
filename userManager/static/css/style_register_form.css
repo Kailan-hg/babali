@@ -58,13 +58,11 @@
 .form_buyer input:focus{
     outline: none;
     border: 1px solid #1996e6;
-    color: #fff;
 }
 
 .form_maker input:focus{
     outline: none;
     border: 1px solid #1996e6;
-    color: #fff;
 }
 
 .form_buyer button.btn-submit{

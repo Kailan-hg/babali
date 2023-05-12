@@ -1,21 +1,19 @@
-{% extends "base.html" %}
-
-{% block content %}
-  <h2>Iniciar sesión como fabricante</h2>
-  <div class="login">
-    <form method="post" class="login_form">
-      {% csrf_token %}
-      {{ form.as_p }}
-      {% if error %}
-          <p>{{ error }}</p>
-      {% endif %}
-      <button type="submit" onclick="setState('buyer')" class="btn btn-submit">Ingresar</button>
-    </form>
-    <br>
-    <div class="links">
-      <a href="/login_user_maker"> Iniciar secion como comprador </a>
-      <a href="/register_form_maker"> Registrate como comprador </a>
-      <a href="/register_form_buyer"> Registrate como fabricante </a>
-    </div>
+{% extends "base.html" %} {% block content %}
+<h2>Iniciar sesión como Comprador</h2>
+<div class="login">
+  <form method="post" class="login_form">
+    {% csrf_token %} {{ form.as_p }} {% if error %}
+    <p>{{ error }}</p>
+    {% endif %}
+    <button type="submit" onclick="setState('buyer')" class="btn btn-submit">
+      Ingresar
+    </button>
+  </form>
+  <br />
+  <div class="links">
+    <a href="/login_user_maker"> Iniciar secion como fabricante </a>
+    <a href="/register_form_maker"> Registrate como fabricante </a>
+    <a href="/register_form_buyer"> Registrate como Comprador </a>
   </div>
+</div>
 {% endblock %}
