@@ -141,10 +141,13 @@ class Buyer(models.Model):
             self._email = email
             self._password = password
             # If I remove this it doesn't work, it's like the "coco" of doom XD
-            print(self._password, self.email)
+            print(self._password, self._email)
             # Login user
-            self._login()
-            return self.error
+            user_pass = self._login()
+            if not user_pass:
+                return self.error
+            else:
+                return "User validate"
         else:
             # return error and push.
             self.error.append(f"Error: El email o el password estan vacios")
@@ -158,7 +161,6 @@ class Buyer(models.Model):
             # Execute query and check lines recovery
             self._cur.execute(query)
             self._rows = self._cur.fetchone()
-
             # None => User exist
             if None is not self._rows:
                 # Insert cookie to chrome
@@ -170,6 +172,7 @@ class Buyer(models.Model):
                     key='company_name', value=self._email, path="/login_user_buyer/")
                 # Close database
                 self._conn.close()
+                return True
             else:
                 # Error print user
                 self.error.append(
@@ -177,6 +180,16 @@ class Buyer(models.Model):
         # Error database user.
         except psycopg2.DatabaseError as e:
             self.error.append(f"Error: {e}")
+
+    def return_user_by_email(self, email):
+        query = f"SELECT * FROM {self._BUYERUSERTABLE} WHERE email='{email}'"
+        try:
+            self._cur.execute(query)
+            self._rows = self._cur.fetchone()
+            return self._rows[1]
+        except psycopg2.DatabaseError as e:
+            self.error.append(f'error: {e}')
+            self._conn.close()
 
 
 class Maker(models.Model):
@@ -296,8 +309,11 @@ class Maker(models.Model):
             self._company_name = company_name
             self._password = password
             # Login method execute
-            self._login()
-            return self.error
+            company_pass = self._login()
+            if not company_pass:
+                return self.error
+            else:
+                return "Company Validate"
         else:
             # Return error
             self.error.append(
@@ -325,6 +341,7 @@ class Maker(models.Model):
                                     value=self._company_name, path="/")
                 # Close connection database
                 self._conn.close()
+                return True
             else:
                 self.error.append(
                     f"Error: La contrasena o el nombre de la compania son incorrectos")
