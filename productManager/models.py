@@ -152,7 +152,7 @@ class BuyerProduct(models.Model):
 
     # Generar graficos
     def return_products_by_user(self):
-        query = f"SELECT * FROM {self._BUYERPRODUCTTABLE} WHERE company_name='{self._username}'"
+        query = f"SELECT * FROM {self._BUYERPRODUCTTABLE} WHERE username='{self._username}'"
 
         try:
             self._cur.execute(query)
@@ -163,6 +163,9 @@ class BuyerProduct(models.Model):
             # Finish connection with database
             self._conn.close()
             return False
+
+    def change_username(self, username):
+        self._username = username
 
 
 class MakerProduct():

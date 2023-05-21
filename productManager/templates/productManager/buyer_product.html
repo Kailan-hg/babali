@@ -1,5 +1,21 @@
 {% extends 'productManager/base.html' %} {% block contentProduct %}
 
 <h1>{{ username }}</h1>
+Hi
+<button class="button-print" onclick="container_car_show()">
+  <img
+    src="https://cdn-icons-png.flaticon.com/512/107/107831.png"
+    height="50px"
+    width="50"
+    alt="Foto"
+  />
+</button>
 
+<div class="container-car" style="display: none">
+  {% if items_car|length > 0 %} {% for item in items_car %}
+  <span> {{ item.3 }} - $ {{ item.2 }} </span>
+  {% endfor %} {% else %}
+  <span> No entry </span>
+  {% endif %}
+</div>
 {% endblock contentProduct %}
