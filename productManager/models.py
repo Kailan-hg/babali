@@ -1,6 +1,7 @@
 from datetime import date
 from django.db import models
 import psycopg2
+from django.core.validators import MinValueValidator
 
 
 class BuyerProduct(models.Model):
@@ -166,6 +167,92 @@ class BuyerProduct(models.Model):
 
 class MakerProduct():
     _company_name = None
+    _product = None
+    _amount = None
+    _price_und = None
+    _amount_stuck = None
+    _amount_sold = None
+
+    # var to database.
+    _conn = None
+    # Cursor this connection.
+    _cur = None
+    # Lines recovery cursor.
+    _rows = None
+
+    # CONST
+    _BUYERPRODUCTTABLE = "buyer_products"
+    _MAKERPRODUCTTABLE = "maker_products"
+    _MAKERUSERTABLE = "maker_user"
+
+    success = []
+    error = []
 
     def __init__(self, company_name=None):
         self._company_name = company_name
+
+        # Database connect
+        self._conn = psycopg2.connect(
+            database="babali",
+            user="hernani",
+            password="03031516h",
+            host="localhost",
+            port="5432"
+        )
+
+        # Cursor this conection
+        self._cur = self._conn.cursor()
+
+    """
+        TODO : Save values to product receive to method: POST (Created product)
+        @params : product, amount, price_und, amount_stuck, amount_sold
+    """
+
+    def save_product(self, product, amount, price_und, amount_stuck, amount_sold):
+        self._product = product
+        self._amount = amount
+        self._price_und = price_und
+        self._amount_stuck = amount_stuck
+        self._amount_sold = amount_sold
+
+        self.success.append("Se guardaron los datos")
+
+    """
+        TODO : Insert values to database.
+        Execute save_product before to this function.
+    """
+
+    def save_request(self):
+        if self._product is not None and self._amount is not None and self._price_und is not None and self._amount_stuck is not None and self._amount_sold is not None:
+            if self._new_product():
+                self.success = "Se insertaron los productos"
+                return True
+            else:
+                self.error.append(
+                    "Verifique los valores, no se pueden enviar ningun valor: \"None\"")
+                return False
+
+    def _new_product(self):
+        query = f"""INSERT INTO {self._MAKERPRODUCTTABLE}(product, amount, price_und, amount_stuck, amount_sold, company_name)
+        VALUES('{self._product}', {self._amount}, {self._price_und}, {self._amount_stuck}, {self._amount_sold}, '{self._company_name}')
+        """
+
+        # Execute and validate error log.
+        try:
+            self._cur.execute(query)
+            self._conn.commit()
+            return True
+        # Error in database, close connection.
+        except psycopg2.DatabaseError as e:
+            self.error.append(f"error: {e}")
+            self._conn.close()
+            return False
+
+
+class NewProductForm (models.Model):
+    product = models.CharField(max_length=100)
+    amount = models.IntegerField(validators=[MinValueValidator(0)])
+    price_und = models.IntegerField(validators=[MinValueValidator(1)])
+    amount_stuck = models.IntegerField(validators=[MinValueValidator(0)])
+    amount_sold = models.IntegerField(validators=[MinValueValidator(0)])
+    company_name = models.CharField(max_length=3000)
