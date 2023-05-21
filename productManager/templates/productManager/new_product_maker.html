@@ -1,0 +1,8 @@
+{% extends 'productManager/base.html' %} {% block contentProduct %}
+<div>
+  <h2>Crear producto</h2>
+  <form method="POST">
+    {%csrf_token%} {{ form.as_p }} <button>Create</button>
+  </form>
+</div>
+{% endblock contentProduct %}
